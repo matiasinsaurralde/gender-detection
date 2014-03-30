@@ -29,8 +29,9 @@ static void read_csv(const string& filename, vector<Mat>& images, vector<int>& l
     }
 };
 
-int main() {
+int main(int argc, const char *argv[]) {
   string fn_csv = "model.csv";
+  string fn_predict = argv[1];
 
   vector<Mat> modelImages;
   vector<int> modelLabels;
@@ -39,4 +40,15 @@ int main() {
 
   Ptr<FaceRecognizer> model = createLBPHFaceRecognizer();
   model->train( modelImages, modelLabels );
+
+  std::cout << "Finding match for '" << fn_predict << "'" << std::endl;
+  Mat testImage =  imread(fn_predict, 0);
+
+  int predictedLabel =-1;
+  double predictedConfidence = 0.0;
+
+  model->predict(testImage, predictedLabel, predictedConfidence);
+
+  std::cout << "'" << fn_predict << "' => " << predictedLabel << std::endl;
+  std::cout << "Confidence: " << predictedConfidence << std::endl;
 };
